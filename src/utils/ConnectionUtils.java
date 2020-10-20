@@ -1,7 +1,9 @@
 package utils;
 
-import sockets.Client;
-import sockets.Server;
+import exceptions.NoSuchOptionException;
+import interfaces.ConnectionHandler;
+import sockets.ClientConnection;
+import sockets.ServerConnection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,32 +13,29 @@ public class ConnectionUtils {
 
     public ConnectionUtils() {
         handlers = new HashMap() {{
-            put('s', ServerConnectionHandler.class);
-            put('c', ClientConnectionHandler.class);
+            put(1, ServerConnectionHandler.class);
+            put(2, ClientConnectionHandler.class);
         }};
     }
 
-    public void connect(char option) throws IllegalAccessException, InstantiationException {
+    public void connectOrCreateSession(int option) throws IllegalAccessException, InstantiationException, NoSuchOptionException {
+        if(option != StaticResources.OPT_CREATE_MATCH || option != StaticResources.OPT_JOIN_MATCH)
+            throw new NoSuchOptionException("Option '" + option + "' couldn't be resolved.");
+
         ((ConnectionHandler) this.handlers.get(option).newInstance()).connect();
     }
 }
 
-interface ConnectionHandler {
-    void connect();
-}
-
 class ServerConnectionHandler implements ConnectionHandler {
-
     @Override
     public void connect() {
-        new Server().init();
+        new ServerConnection().init();
     }
 }
 
 class ClientConnectionHandler implements ConnectionHandler {
-
     @Override
     public void connect() {
-        new Client().init();
+        new ClientConnection().init();
     }
 }

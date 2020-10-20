@@ -1,6 +1,9 @@
 package sockets;
 
+import utils.Console;
 import utils.ScannerUtils;
+import utils.Validators;
+
 import static utils.StaticResources.*;
 
 import java.io.BufferedReader;
@@ -10,7 +13,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import static java.lang.System.out;
 
-public class Client implements Runnable {
+public class ClientConnection implements Runnable {
 
     private Socket client;
     private String name;
@@ -18,21 +21,21 @@ public class Client implements Runnable {
 
     private final ScannerUtils scanner;
 
-    public Client() {
+    public ClientConnection() {
         scanner = new ScannerUtils();
         try {
             client = new Socket(
-                    scanner.getString(IP_REQUEST_MSG),
-                    scanner.getInt(CONNECTION_PORT_REQUEST_MSG, n -> n >= 0 && n < 49152)
+                    scanner.getStringWithMessage(MSG_IP_REQUEST),
+                    scanner.getIntWithMessage(MSG_CONNECTION_PORT_REQUEST, Validators::portValidator)
             );
             scanner.clearBuffer();
 
-            this.name = scanner.getString(NAME_REQUEST_MSG);
+            this.name = scanner.getStringWithMessage(MSG_NAME_REQUEST);
             this.writer = new PrintWriter(client.getOutputStream());
         }
         catch (IOException e) {
-            if (e.getMessage().contains(CONNECTION_REFUSED_MSG)) {
-                System.err.println(SERVER_NOT_FOUND_ERROR_PREFIX + e.getMessage());
+            if (e.getMessage().contains(MSG_CONNECTION_REFUSED)) {
+                System.err.println(PREFIX_SERVER_NOT_FOUND_ERROR + e.getMessage());
             }
         }
     }
@@ -44,15 +47,15 @@ public class Client implements Runnable {
         messageReader.setName("messageReader");
         messageReader.start();
 
-        while(!currentText.equalsIgnoreCase(LEAVE_SERVER_PREFIX)) {
-            currentText = scanner.getString("").trim();
+        while(!currentText.equalsIgnoreCase(PREFIX_LEAVE_SERVER)) {
+            currentText = scanner.getStringWithMessage("").trim();
 
             if(currentText.length() != 0) {
-                if (currentText.equalsIgnoreCase(CLEAR_CLI_PREFIX)) {
-                    cls();
+                if (currentText.equalsIgnoreCase(PREFIX_CLEAR_CLI)) {
+                    Console.cls();
                 }
-                else if (currentText.equalsIgnoreCase(CHANGE_NICKNAME_PREFIX)) {
-                    currentText = this.name + " has changed its nickname to " + (this.name = scanner.getString(NAME_REQUEST_MSG));
+                else if (currentText.equalsIgnoreCase(PREFIX_CHANGE_NICKNAME)) {
+                    currentText = this.name + " has changed its nickname to " + (this.name = scanner.getStringWithMessage(MSG_NAME_REQUEST));
                     sendMessage(currentText);
                 }
                 else {
@@ -70,7 +73,7 @@ public class Client implements Runnable {
             readMessages();
         }
         catch (IOException e) {
-            out.println(SERVER_DISCONNECTED_MSG);
+            Console.println(MSG_SERVER_DISCONNECTED);
         }
     }
 
@@ -85,13 +88,7 @@ public class Client implements Runnable {
 
         while(true) {
             message = reader.readLine();
-            out.println(message);
-        }
-    }
-
-    private void cls() {
-        for (int i = 0; i < 100; i++) {
-            out.println();
+            Console.println(message);
         }
     }
 }

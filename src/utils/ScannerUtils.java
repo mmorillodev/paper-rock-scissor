@@ -12,7 +12,7 @@ public class ScannerUtils {
         this.scanner= new Scanner(System.in);
     }
 
-    public int getInt(String message, Predicate<Integer> validInput) {
+    public int getIntWithMessage(String message, Predicate<Integer> validInput) {
         int input;
         boolean retry = false;
 
@@ -33,7 +33,7 @@ public class ScannerUtils {
         return input;
     }
 
-    public int getInt(String message) {
+    public int getIntWithMessage(String message) {
         int input;
         boolean retry = false;
 
@@ -54,7 +54,7 @@ public class ScannerUtils {
         return input;
     }
 
-    public String getString(String message, Predicate<String> validInput) {
+    public String getStringWithMessage(String message, Predicate<String> validInput) {
         String input;
         boolean retry = false;
 
@@ -70,7 +70,7 @@ public class ScannerUtils {
         return input;
     }
 
-    public String getString(String message) {
+    public String getStringWithMessage(String message) {
         String input;
         boolean retry = false;
 
@@ -87,7 +87,11 @@ public class ScannerUtils {
         return input;
     }
 
-    public double getDouble(String message, Predicate<Double> validInput) {
+    public String getString() {
+        return this.getStringWithMessage("");
+    }
+
+    public double getDoubleWithMessage(String message, Predicate<Double> validInput) {
         double input;
         boolean retry = false;
 
@@ -108,7 +112,7 @@ public class ScannerUtils {
         return input;
     }
 
-    public double getDouble(String message) {
+    public double getDoubleWithMessage(String message) {
         double input;
         boolean retry = false;
 
@@ -129,7 +133,7 @@ public class ScannerUtils {
         return input;
     }
 
-    public double getFloat(String message, Predicate<Float> validInput) {
+    public double getFloatWithMessage(String message, Predicate<Float> validInput) {
         float input;
         boolean retry = false;
 
@@ -150,7 +154,7 @@ public class ScannerUtils {
         return input;
     }
 
-    public double getFloat(String message) {
+    public double getFloatWithMessage(String message) {
         float input;
         boolean retry = false;
 
@@ -171,7 +175,7 @@ public class ScannerUtils {
         return input;
     }
 
-    public double getByte(String message, Predicate<Byte> validInput) {
+    public double getByteWithMessage(String message, Predicate<Byte> validInput) {
         byte input;
         boolean retry = false;
 
@@ -192,7 +196,7 @@ public class ScannerUtils {
         return input;
     }
 
-    public double getByte(String message) {
+    public double getByteWithMessage(String message) {
         byte input;
         boolean retry = false;
 
@@ -213,7 +217,7 @@ public class ScannerUtils {
         return input;
     }
 
-    public char getChar(String message, Predicate<Character> validInput) {
+    public char getCharWithMessage(String message, Predicate<Character> validInput) {
         char input;
         boolean retry = false;
 
@@ -230,7 +234,7 @@ public class ScannerUtils {
         return input;
     }
 
-    public char getChar(String message) {
+    public char getCharWithMessage(String message) {
         char input;
         boolean retry = false;
 
