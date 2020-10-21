@@ -1,4 +1,4 @@
-package sockets;
+package socket;
 
 import utils.Console;
 import utils.ScannerUtils;
@@ -11,9 +11,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import static java.lang.System.out;
 
-public class ClientConnection implements Runnable {
+public class Client implements Runnable {
 
     private Socket client;
     private String name;
@@ -21,7 +20,7 @@ public class ClientConnection implements Runnable {
 
     private final ScannerUtils scanner;
 
-    public ClientConnection() {
+    public Client() {
         scanner = new ScannerUtils();
         try {
             client = new Socket(

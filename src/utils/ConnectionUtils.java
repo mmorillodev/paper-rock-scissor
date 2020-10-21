@@ -2,9 +2,10 @@ package utils;
 
 import exceptions.NoSuchOptionException;
 import interfaces.ConnectionHandler;
-import sockets.ClientConnection;
-import sockets.ServerConnection;
+import socket.Client;
+import socket.Server;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,13 +30,16 @@ public class ConnectionUtils {
 class ServerConnectionHandler implements ConnectionHandler {
     @Override
     public void connect() {
-        new ServerConnection().init();
+        try {
+            new Server().init();
+        }
+        catch (IOException e) {}
     }
 }
 
 class ClientConnectionHandler implements ConnectionHandler {
     @Override
     public void connect() {
-        new ClientConnection().init();
+        new Client().init();
     }
 }

@@ -1,8 +1,13 @@
 package utils;
 
+import static java.lang.System.err;
 import static java.lang.System.out;
 
 public class Console {
+
+    public static void err(String msg) {
+        err.println(msg);
+    }
 
     public static void print(String msg){
         out.print(msg);
