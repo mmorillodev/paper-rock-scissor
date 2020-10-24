@@ -24,9 +24,10 @@ public class StaticResources {
 
     public static final int OPT_CREATE_MATCH;
     public static final int OPT_JOIN_MATCH;
+    public static final int DEFAULT_PORT;
 
     static {
-        MENU_OPTIONS = "[1] Create match\n[2] Join match:\n";
+        MENU_OPTIONS = "[1] Server\n[2] Client\n> ";
 
         MSG_SERVER_PORT_REQUEST = "Enter the port the server will listen: ";
         MSG_DISCONNECTED_CLIENT = "Client disconnected!";
@@ -48,5 +49,6 @@ public class StaticResources {
 
         OPT_CREATE_MATCH = 1;
         OPT_JOIN_MATCH = 2;
+        DEFAULT_PORT = 8080;
     }
 }

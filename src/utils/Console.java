@@ -5,6 +5,7 @@ import static java.lang.System.out;
 
 public class Console {
 
+
     public static void err(String msg) {
         err.println(msg);
     }
@@ -13,8 +14,12 @@ public class Console {
         out.print(msg);
     }
 
-    public static void println(String msg){
+    public static void println(Object msg){
         out.println(msg);
+    }
+
+    public static void br() {
+        out.println();
     }
 
     public static void cls() {

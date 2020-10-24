@@ -2,7 +2,6 @@ package socket;
 
 import utils.Console;
 import utils.ScannerUtils;
-import utils.Validators;
 
 import static utils.StaticResources.*;
 
@@ -23,13 +22,9 @@ public class Client implements Runnable {
     public Client() {
         scanner = new ScannerUtils();
         try {
-            client = new Socket(
-                    scanner.getStringWithMessage(MSG_IP_REQUEST),
-                    scanner.getIntWithMessage(MSG_CONNECTION_PORT_REQUEST, Validators::portValidator)
-            );
+            client = new Socket(scanner.getStringWithMessage(MSG_IP_REQUEST), DEFAULT_PORT);
             scanner.clearBuffer();
 
-            this.name = scanner.getStringWithMessage(MSG_NAME_REQUEST);
             this.writer = new PrintWriter(client.getOutputStream());
         }
         catch (IOException e) {

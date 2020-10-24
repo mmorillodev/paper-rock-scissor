@@ -19,8 +19,10 @@ public class ConnectionUtils {
         }};
     }
 
-    public void connectOrCreateSession(int option) throws IllegalAccessException, InstantiationException, NoSuchOptionException {
-        if(option != StaticResources.OPT_CREATE_MATCH || option != StaticResources.OPT_JOIN_MATCH)
+    public void connectOrCreateSession(int option)
+            throws IllegalAccessException, InstantiationException, NoSuchOptionException {
+
+        if(option != StaticResources.OPT_CREATE_MATCH && option != StaticResources.OPT_JOIN_MATCH)
             throw new NoSuchOptionException("Option '" + option + "' couldn't be resolved.");
 
         ((ConnectionHandler) this.handlers.get(option).newInstance()).connect();

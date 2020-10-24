@@ -1,34 +1,30 @@
 package socket;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import entity.Client;
-import entity.GameParty;
+import exceptions.NoSuchPartyException;
+import interfaces.OnClientConnectedListener;
+import interfaces.OnMessageSentListener;
 import utils.Console;
+import utils.GamePartyManager;
 import utils.ScannerUtils;
-import utils.Validators;
 
 import static utils.StaticResources.*;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 
 import static java.lang.System.out;
 
-public class Server {
+public class Server implements OnClientConnectedListener {
 
-    private Client client;
-    private java.net.ServerSocket server;
-    private String name;
-
-    private List<GameParty> parties = new LinkedList<>();
+    private ServerSocket server;
+    GamePartyManager manager = new GamePartyManager();
 
     public Server() {
-        ScannerUtils scanner = new ScannerUtils();
-
         try {
-            server = new java.net.ServerSocket(scanner.getIntWithMessage(MSG_SERVER_PORT_REQUEST, Validators::portValidator));
-            scanner.clearBuffer();
-            name = scanner.getStringWithMessage(MSG_NAME_REQUEST);
+            server = new ServerSocket(DEFAULT_PORT);
         }
         catch(IOException e) {
             Console.err(e.getMessage());
@@ -39,18 +35,68 @@ public class Server {
 
     public void init() throws IOException {
         ScannerUtils scanner = new ScannerUtils();
-        String message = "";
 
-        new AwaitClientThread().start();
+        Console.br();
+
+        AwaitClientThread awaitClientThread = new AwaitClientThread();
+        awaitClientThread.setOnClientConnectedListener(this);
+        awaitClientThread.start();
+
+        Console.println("Everything set up! To connect to this server use the IP address showed bellow:\n" + InetAddress.getLocalHost().getHostAddress());
     }
 
-    private class AwaitClientThread extends Thread {
+    @Override
+    public void onClientConnected(Client client) {
+        Console.println("Client connected");
+
+        try {
+            boolean keepListening = false;
+            do {
+                String answer = client.sendQuestion("[1] Connect to an existing party\n[2] Create a new party\n> ");
+
+                if(answer.equals("1")) {
+                    String partyName = client.sendQuestion("Type the name of the party you want to connect to, or type '!list' to get the list of all the available parties: ");
+                    if(partyName.equals("!list")) {
+                        Console.println(manager.getAllPartyNames().stream().reduce((acm, current) -> acm + "\n" + current).orElse(null));
+                        keepListening = true;
+                    } else {
+                        if(manager.includesParty(partyName)) {
+                            connectToParty(client, partyName);
+                            Console.println("successfully connected to party " + partyName);
+
+                            keepListening = false;
+                        } else {
+                            client.sendMessage("Party not found!");
+                            keepListening = true;
+                        }
+                    }
+                } else if(answer.equals("2")) {
+                    String partyName = client.sendQuestion("What is the name of the party? ");
+                    manager.createPartyAndConnect(partyName, client);
+
+                    keepListening = false;
+                }
+            } while (keepListening);
+        } catch (IOException e) {}
+    }
+
+    private void connectToParty(Client client, String partyName) {
+        try {
+            manager.connectClientToParty(client, partyName);
+        } catch (NoSuchPartyException e) {
+            Console.err(e.getMessage());
+        }
+    }
+
+    private class AwaitClientThread extends Thread implements OnMessageSentListener {
 
         private boolean keepWaiting = true;
+        private OnClientConnectedListener onClientConnectedListener;
 
         @Override
         public void run() {
             try {
+                Console.println("star waiting clients");
                 getClients();
             }
             catch (IOException e) {
@@ -60,11 +106,21 @@ public class Server {
         }
 
         void getClients() throws IOException {
-            while (keepWaiting) {
-                client = new Client(server.accept());
-
-                this.keepWaiting = false;
+            while (true) {
+                Client client = new Client(server.accept());
+                if(onClientConnectedListener != null) {
+                    onClientConnectedListener.onClientConnected(client);
+                }
             }
+        }
+
+        @Override
+        public void onMessageSent(String message) {
+
+        }
+
+        public void setOnClientConnectedListener(OnClientConnectedListener onClientConnectedListener) {
+            this.onClientConnectedListener = onClientConnectedListener;
         }
     }
 }
