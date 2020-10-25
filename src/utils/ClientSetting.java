@@ -1,6 +1,7 @@
 package utils;
 
 import entity.Client;
+import exceptions.FullPartyException;
 import exceptions.NoSuchPartyException;
 import socket.server.GamePartyManager;
 
@@ -48,7 +49,11 @@ public class ClientSetting {
 
     private void handleCreateParty() {
         String partyName = client.sendQuestion("What is the name of the party? ");
-        manager.createPartyAndConnect(partyName, client);
+        try {
+            manager.createPartyAndConnect(partyName, client);
+        } catch (FullPartyException e) {
+            e.printStackTrace();
+        }
 
         finishedSetup = true;
     }
@@ -71,7 +76,7 @@ public class ClientSetting {
     private void connectToParty(Client client, String partyName) {
         try {
             manager.connectClientToParty(client, partyName);
-        } catch (NoSuchPartyException e) {
+        } catch (NoSuchPartyException | FullPartyException e) {
             Console.err(e.getMessage());
         }
     }

@@ -2,6 +2,7 @@ package socket.server;
 
 import entity.Client;
 import entity.GameParty;
+import exceptions.FullPartyException;
 import exceptions.NoSuchPartyException;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 public class GamePartyManager {
     private List<GameParty> parties = new ArrayList<>();
 
-    public void connectClientToParty(Client client, String partyName) throws NoSuchPartyException {
+    public void connectClientToParty(Client client, String partyName) throws NoSuchPartyException, FullPartyException {
         GameParty party = parties.stream()
                 .filter(currentParty -> currentParty.nameEquals(partyName))
                 .findAny()
@@ -21,16 +22,21 @@ public class GamePartyManager {
             throw new NoSuchPartyException("Party " + partyName + " not found");
 
         party.connectClient(client);
+
+        if(party.getPlayersQtt() == GameParty.MAX_PLAYERS) {
+            party.startMatch();
+        }
     }
 
-    public void createPartyAndConnect(String name, Client client) {
+    public void createPartyAndConnect(String name, Client client) throws FullPartyException {
+        createAndGetParty(name).connectClient(client);
+    }
+
+    public GameParty createAndGetParty(String name) {
         GameParty party = new GameParty(name);
         parties.add(party);
-        party.connectClient(client);
-    }
 
-    public void createParty(String name) {
-        parties.add(new GameParty(name));
+        return party;
     }
 
     public boolean includesParty(String partyName) {
@@ -47,7 +53,7 @@ public class GamePartyManager {
 
     public List<String> getAllPartyNames() {
         return parties.stream()
-                .map(gameParty -> gameParty.getName())
+                .map(gameParty -> gameParty.getPartyName())
                 .collect(Collectors.toList());
     }
 }

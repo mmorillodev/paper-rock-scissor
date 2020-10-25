@@ -5,7 +5,6 @@ import interfaces.OnClientConnectedListener;
 import interfaces.OnMessageSentListener;
 import utils.ClientSetting;
 import utils.Console;
-import utils.ScannerUtils;
 
 import static utils.StaticResources.*;
 
@@ -32,8 +31,6 @@ public class Server implements OnClientConnectedListener {
     }
 
     public void init() throws IOException {
-        ScannerUtils scanner = new ScannerUtils();
-
         Console.br();
 
         AwaitClientThread awaitClientThread = new AwaitClientThread();
@@ -50,7 +47,7 @@ public class Server implements OnClientConnectedListener {
         new ClientSetting(client, manager).startInitialConfigs();
     }
 
-    private class AwaitClientThread extends Thread implements OnMessageSentListener {
+    private class AwaitClientThread extends Thread {
 
         private boolean keepWaiting = true;
         private OnClientConnectedListener onClientConnectedListener;
@@ -74,11 +71,6 @@ public class Server implements OnClientConnectedListener {
                     onClientConnectedListener.onClientConnected(client);
                 }
             }
-        }
-
-        @Override
-        public void onMessageSent(String message) {
-
         }
 
         public void setOnClientConnectedListener(OnClientConnectedListener onClientConnectedListener) {
