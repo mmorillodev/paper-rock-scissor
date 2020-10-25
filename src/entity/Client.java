@@ -1,5 +1,6 @@
 package entity;
 
+import exceptions.NoSuchPartyException;
 import interfaces.OnMessageSentListener;
 import utils.Console;
 import utils.ScannerUtils;
@@ -14,35 +15,31 @@ public class Client {
 
     private PrintWriter writer;
     private BufferedReader reader;
-    private ScannerUtils scannerUtils;
-
-    private OnMessageSentListener onMessageSentListener;
 
     public Client(Socket clientSocket) throws IOException {
         this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         this.writer = new PrintWriter(clientSocket.getOutputStream());
-
-        startClient();
     }
 
-    private void startClient() {
-        scannerUtils = new ScannerUtils();
-    }
+    public String readLine() {
+        try {
+            return this.reader.readLine();
+        } catch(IOException e) {
+            Console.err(e.getMessage());
 
-    public String readLine() throws IOException {
-        return this.reader.readLine();
+            return null;
+        }
     }
 
     public void sendMessage(String message) {
+        Console.println(message);
+        Console.println(writer);
+
         writer.println(message);
         writer.flush();
     }
 
-    public void addMessageListener(OnMessageSentListener onMessageSentListener) {
-        this.onMessageSentListener = onMessageSentListener;
-    }
-
-    public String sendQuestion(String question) throws IOException {
+    public String sendQuestion(String question) {
         sendMessage(question);
         return readLine();
     }

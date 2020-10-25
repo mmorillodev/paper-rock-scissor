@@ -5,10 +5,12 @@ import entity.Client;
 import exceptions.NoSuchPartyException;
 import interfaces.OnClientConnectedListener;
 import interfaces.OnMessageSentListener;
+import utils.ClientSetting;
 import utils.Console;
 import utils.GamePartyManager;
 import utils.ScannerUtils;
 
+import static java.lang.System.identityHashCode;
 import static utils.StaticResources.*;
 
 import java.io.IOException;
@@ -49,43 +51,9 @@ public class Server implements OnClientConnectedListener {
     public void onClientConnected(Client client) {
         Console.println("Client connected");
 
-        try {
-            boolean keepListening = false;
-            do {
-                String answer = client.sendQuestion("[1] Connect to an existing party\n[2] Create a new party\n> ");
+        new ClientSetting(client, manager).startInitialConfigs();
 
-                if(answer.equals("1")) {
-                    String partyName = client.sendQuestion("Type the name of the party you want to connect to, or type '!list' to get the list of all the available parties: ");
-                    if(partyName.equals("!list")) {
-                        Console.println(manager.getAllPartyNames().stream().reduce((acm, current) -> acm + "\n" + current).orElse(null));
-                        keepListening = true;
-                    } else {
-                        if(manager.includesParty(partyName)) {
-                            connectToParty(client, partyName);
-                            Console.println("successfully connected to party " + partyName);
-
-                            keepListening = false;
-                        } else {
-                            client.sendMessage("Party not found!");
-                            keepListening = true;
-                        }
-                    }
-                } else if(answer.equals("2")) {
-                    String partyName = client.sendQuestion("What is the name of the party? ");
-                    manager.createPartyAndConnect(partyName, client);
-
-                    keepListening = false;
-                }
-            } while (keepListening);
-        } catch (IOException e) {}
-    }
-
-    private void connectToParty(Client client, String partyName) {
-        try {
-            manager.connectClientToParty(client, partyName);
-        } catch (NoSuchPartyException e) {
-            Console.err(e.getMessage());
-        }
+        
     }
 
     private class AwaitClientThread extends Thread implements OnMessageSentListener {
@@ -106,7 +74,7 @@ public class Server implements OnClientConnectedListener {
         }
 
         void getClients() throws IOException {
-            while (true) {
+            while (keepWaiting) {
                 Client client = new Client(server.accept());
                 if(onClientConnectedListener != null) {
                     onClientConnectedListener.onClientConnected(client);

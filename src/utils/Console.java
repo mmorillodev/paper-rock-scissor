@@ -6,11 +6,11 @@ import static java.lang.System.out;
 public class Console {
 
 
-    public static void err(String msg) {
+    public static void err(Object msg) {
         err.println(msg);
     }
 
-    public static void print(String msg){
+    public static void print(Object msg){
         out.print(msg);
     }
 
