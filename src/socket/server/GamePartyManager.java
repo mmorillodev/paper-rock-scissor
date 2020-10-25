@@ -1,4 +1,4 @@
-package utils;
+package socket.server;
 
 import entity.Client;
 import entity.GameParty;

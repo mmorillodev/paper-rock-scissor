@@ -3,7 +3,7 @@ package utils;
 import exceptions.NoSuchOptionException;
 import interfaces.ConnectionHandler;
 import socket.Client;
-import socket.Server;
+import socket.server.Server;
 
 import java.io.IOException;
 import java.util.HashMap;

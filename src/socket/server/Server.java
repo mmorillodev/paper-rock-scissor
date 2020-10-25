@@ -1,16 +1,12 @@
-package socket;
+package socket.server;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import entity.Client;
-import exceptions.NoSuchPartyException;
 import interfaces.OnClientConnectedListener;
 import interfaces.OnMessageSentListener;
 import utils.ClientSetting;
 import utils.Console;
-import utils.GamePartyManager;
 import utils.ScannerUtils;
 
-import static java.lang.System.identityHashCode;
 import static utils.StaticResources.*;
 
 import java.io.IOException;
@@ -52,8 +48,6 @@ public class Server implements OnClientConnectedListener {
         Console.println("Client connected");
 
         new ClientSetting(client, manager).startInitialConfigs();
-
-        
     }
 
     private class AwaitClientThread extends Thread implements OnMessageSentListener {

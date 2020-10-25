@@ -1,9 +1,6 @@
 package entity;
 
-import exceptions.NoSuchPartyException;
-import interfaces.OnMessageSentListener;
 import utils.Console;
-import utils.ScannerUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -2,6 +2,7 @@ package utils;
 
 import entity.Client;
 import exceptions.NoSuchPartyException;
+import socket.server.GamePartyManager;
 
 public class ClientSetting {
 
