@@ -1,7 +1,7 @@
 package interfaces;
 
-import entity.Client;
+import entity.PlayerImpl;
 
 public interface OnClientConnectedListener {
-    void onClientConnected(Client client);
+    void onClientConnected(PlayerImpl playerImpl);
 }

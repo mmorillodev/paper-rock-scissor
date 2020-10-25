@@ -27,7 +27,7 @@ public class StaticResources {
     public static final int OPT_JOIN_MATCH;
     public static final int OPT_ROCK;
     public static final int OPT_PAPER;
-    public static final int OPT_SCIZOR;
+    public static final int OPT_SCISSOR;
     public static final int DEFAULT_PORT;
 
     static {
@@ -61,7 +61,7 @@ public class StaticResources {
         OPT_JOIN_MATCH = 2;
         OPT_ROCK = 1;
         OPT_PAPER = 2;
-        OPT_SCIZOR = 3;
+        OPT_SCISSOR = 3;
         DEFAULT_PORT = 8080;
     }
 }

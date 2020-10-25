@@ -1,5 +1,7 @@
 package interfaces;
 
+import entity.PlayerImpl;
+
 public interface OnMessageSentListener {
-    public void onMessageSent(String message);
+    void onMessageSent(PlayerImpl player, String message);
 }

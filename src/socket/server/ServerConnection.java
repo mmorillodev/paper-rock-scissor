@@ -1,8 +1,7 @@
 package socket.server;
 
-import entity.Client;
+import entity.PlayerImpl;
 import interfaces.OnClientConnectedListener;
-import interfaces.OnMessageSentListener;
 import utils.ClientSetting;
 import utils.Console;
 
@@ -41,10 +40,10 @@ public class ServerConnection implements OnClientConnectedListener {
     }
 
     @Override
-    public void onClientConnected(Client client) {
+    public void onClientConnected(PlayerImpl playerImpl) {
         Console.println("Client connected");
 
-        new ClientSetting(client, manager).startInitialConfigs();
+        new ClientSetting(playerImpl, manager).startInitialConfigs();
     }
 
     private class AwaitClientThread extends Thread {
@@ -66,9 +65,9 @@ public class ServerConnection implements OnClientConnectedListener {
 
         void getClients() throws IOException {
             while (keepWaiting) {
-                Client client = new Client(server.accept());
+                PlayerImpl playerImpl = new PlayerImpl(server.accept());
                 if(onClientConnectedListener != null) {
-                    onClientConnectedListener.onClientConnected(client);
+                    onClientConnectedListener.onClientConnected(playerImpl);
                 }
             }
         }

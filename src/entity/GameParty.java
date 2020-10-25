@@ -1,84 +1,96 @@
 package entity;
 
 import exceptions.FullPartyException;
-import static utils.StaticResources.*;
+import interfaces.Player;
+import utils.Console;
 
-import java.util.ArrayList;
-import java.util.List;
+import static utils.StaticResources.*;
 
 public class GameParty {
 
-    public static final int MAX_PLAYERS = 2;
-
-    private List<Client> players = new ArrayList<>(MAX_PLAYERS);
-    private volatile int player1Play;
-    private volatile int player2Play;
-    private volatile boolean roundResolved;
-    private String partyName;
+    private volatile Player player1;
+    private volatile Player player2;
+    private final String partyName;
 
     public GameParty(String partyName) {
         this.partyName = partyName;
     }
 
-    public void connectClient(Client client) throws FullPartyException {
-        if(players.size() >= MAX_PLAYERS)
+    public void connectClient(PlayerImpl playerImpl) throws FullPartyException {
+        if(player1 != null & player2 != null)
             throw new FullPartyException("Party '" + partyName + "' is full!");
 
-        players.add(client);
+        if(player1 == null) {
+            player1 = playerImpl;
+        }
+        else {
+            player2 = playerImpl;
+        }
     }
 
     public void startMatch() {
-        new Thread(() -> {
-            do {
-                player1Play = Integer.parseInt(players.get(0).sendQuestion(OPTS_PLAYS));
-                while (!roundResolved || player1Play != OPT_ROCK || player1Play != OPT_PAPER || player1Play != OPT_SCIZOR)
-                    ;
-            } while (true);
-        }).start();
+        if(player2 == null) {
+            player2 = new BotPlayer();
+        }
 
-        new Thread(() -> {
-            do {
-                player2Play = Integer.parseInt(players.get(1).sendQuestion(OPTS_PLAYS));
-                while (!roundResolved  || player2Play != OPT_ROCK || player2Play != OPT_PAPER || player2Play != OPT_SCIZOR)
-                    ;
-            } while (true);
-        }).start();
+        do {
+            int player1Play = 0;
+            int player2Play = 0;
 
-        new Thread(() -> {
-            while(player1Play == 0 || player2Play == 0)
-                ;
-            if(player1Play == OPT_ROCK && player2Play == OPT_ROCK) {
+            while(player1Play != OPT_ROCK && player1Play != OPT_PAPER && player1Play != OPT_SCISSOR) {
+                player1Play = player1.getPlay();
+                Console.println(player1Play);
+            }
+
+            while(player2Play != OPT_ROCK && player2Play != OPT_PAPER && player2Play != OPT_SCISSOR) {
+                player2Play = player2.getPlay();
+            }
+
+            if (player1Play == OPT_ROCK && player2Play == OPT_ROCK) {
                 //draw
-            }
-            else if(player1Play == OPT_ROCK && player2Play == OPT_PAPER) {
+                handleDraw();
+            } else if (player1Play == OPT_ROCK && player2Play == OPT_PAPER) {
                 //player 2
-            }
-            else if(player1Play == OPT_ROCK && player2Play == OPT_SCIZOR) {
+                handleP2Win();
+            } else if (player1Play == OPT_ROCK) {
                 //player 1
-            }
-            else if(player1Play == OPT_PAPER && player2Play == OPT_ROCK) {
+                handleP1Win();
+            } else if (player1Play == OPT_PAPER && player2Play == OPT_ROCK) {
                 //player 1
-            }
-            else if(player1Play == OPT_PAPER && player2Play == OPT_PAPER) {
+                handleP1Win();
+            } else if (player1Play == OPT_PAPER && player2Play == OPT_PAPER) {
                 //draw
-            }
-            else if(player1Play == OPT_PAPER && player2Play == OPT_SCIZOR) {
+                handleDraw();
+            } else if (player1Play == OPT_PAPER && player2Play == OPT_SCISSOR) {
                 //player 2
-            }
-            else if(player1Play == OPT_SCIZOR && player2Play == OPT_ROCK) {
+                handleP2Win();
+            } else if (player1Play == OPT_SCISSOR && player2Play == OPT_ROCK) {
                 //player 2
-            }
-            else if (player1Play == OPT_SCIZOR && player2Play == OPT_PAPER) {
+                handleP2Win();
+            } else if (player1Play == OPT_SCISSOR && player2Play == OPT_PAPER) {
                 //player 1
-            }
-            else if(player1Play == OPT_SCIZOR && player2Play == OPT_SCIZOR) {
+                handleP1Win();
+            } else if (player1Play == OPT_SCISSOR && player2Play == OPT_SCISSOR) {
                 //draw
+                handleDraw();
             }
-            else {
-                roundResolved = false;
-            }
-            roundResolved = true;
-        }).start();
+        } while(true);
+
+    }
+
+    private void handleDraw() {
+        player1.sendMessage("Draw!");
+        player2.sendMessage("Draw!");
+    }
+
+    private void handleP1Win() {
+        player1.sendMessage("You win!");
+        player2.sendMessage("Player 1 wins!");
+    }
+
+    private void handleP2Win() {
+        player1.sendMessage("Player 2 wins!");
+        player2.sendMessage("You win!");
     }
 
     public boolean nameEquals(String name) {
@@ -89,7 +101,7 @@ public class GameParty {
         return this.partyName;
     }
 
-    public int getPlayersQtt() {
-        return this.players.size();
+    public boolean readyToStart() {
+        return player1 != null & player2 != null;
     }
 }
