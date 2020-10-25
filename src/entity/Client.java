@@ -1,5 +1,6 @@
 package entity;
 
+import interfaces.Player;
 import utils.Console;
 
 import java.io.BufferedReader;
@@ -8,7 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class Client {
+public class Client implements Player {
 
     private PrintWriter writer;
     private BufferedReader reader;
@@ -28,6 +29,7 @@ public class Client {
         }
     }
 
+    @Override
     public void sendMessage(String message) {
         Console.println(message);
         Console.println(writer);
@@ -36,6 +38,7 @@ public class Client {
         writer.flush();
     }
 
+    @Override
     public String sendQuestion(String question) {
         sendMessage(question);
         return readLine();

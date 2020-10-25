@@ -22,14 +22,20 @@ public class StaticResources {
 
     public static final String ERROR_BUSY_PORT;
 
+    public static final String OPTS_PLAYS;
+
     public static final int OPT_CREATE_MATCH;
     public static final int OPT_JOIN_MATCH;
+    public static final int OPT_ROCK;
+    public static final int OPT_PAPER;
+    public static final int OPT_SCIZOR;
     public static final int DEFAULT_PORT;
 
     static {
-        MENU_OPTIONS = "[1] Server\n[2] Client\n> ";
+        MENU_OPTIONS = "[1] Server\n" +
+                        "[2] Client\n" +
+                        "> ";
 
-        MSG_SERVER_PORT_REQUEST = "Enter the port the server will listen: ";
         MSG_DISCONNECTED_CLIENT = "Client disconnected!";
         MSG_CONNECTED_CLIENT = "Client connected!";
         MSG_SERVER_DISCONNECTED = "Server disconnected!";
@@ -47,8 +53,16 @@ public class StaticResources {
 
         ERROR_BUSY_PORT = "Port already in use!";
 
+        OPTS_PLAYS = "[1] Rock\n" +
+                      "[2] Paper\n" +
+                      "[3] Scizor\n" +
+                      "> ";
+
         OPT_CREATE_MATCH = 1;
         OPT_JOIN_MATCH = 2;
+        OPT_ROCK = 1;
+        OPT_PAPER = 2;
+        OPT_SCIZOR = 3;
         DEFAULT_PORT = 8080;
     }
 }

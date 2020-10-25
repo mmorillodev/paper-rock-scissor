@@ -14,12 +14,12 @@ import java.net.ServerSocket;
 
 import static java.lang.System.out;
 
-public class Server implements OnClientConnectedListener {
+public class ServerConnection implements OnClientConnectedListener {
 
     private ServerSocket server;
     GamePartyManager manager = new GamePartyManager();
 
-    public Server() {
+    public ServerConnection() {
         try {
             server = new ServerSocket(DEFAULT_PORT);
         }

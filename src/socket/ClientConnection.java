@@ -11,14 +11,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class Client implements Runnable {
+public class ClientConnection implements Runnable {
 
     private Socket socket;
     private PrintWriter writer;
 
     private final ScannerUtils scanner;
 
-    public Client() {
+    public ClientConnection() {
         scanner = new ScannerUtils();
 
         try {
@@ -35,9 +35,8 @@ public class Client implements Runnable {
     }
 
     public void init() {
-        Thread messageReader = new Thread(this);
-        messageReader.setName("messageReader");
-        messageReader.start();
+        Thread messageReaderThread = new Thread(this);
+        messageReaderThread.start();
 
         while(true) {
             sendMessage(scanner.getStringWithMessage("> "));
@@ -54,11 +53,6 @@ public class Client implements Runnable {
         }
     }
 
-    private void sendMessage(String message) {
-        this.writer.println(message.trim());
-        this.writer.flush();
-    }
-
     private void readMessages() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String message;
@@ -67,5 +61,10 @@ public class Client implements Runnable {
             message = reader.readLine();
             Console.println(message);
         }
+    }
+
+    private void sendMessage(String message) {
+        this.writer.println(message.trim());
+        this.writer.flush();
     }
 }
