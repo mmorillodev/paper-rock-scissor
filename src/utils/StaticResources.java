@@ -4,7 +4,6 @@ public class StaticResources {
 
     public static final String MENU_OPTIONS;
 
-    public static final String MSG_SERVER_PORT_REQUEST;
     public static final String MSG_DISCONNECTED_CLIENT;
     public static final String MSG_CONNECTED_CLIENT;
     public static final String MSG_SERVER_DISCONNECTED;
