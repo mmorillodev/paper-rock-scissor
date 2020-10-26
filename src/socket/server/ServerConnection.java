@@ -54,7 +54,6 @@ public class ServerConnection implements OnClientConnectedListener {
         @Override
         public void run() {
             try {
-                Console.println("star waiting clients");
                 getClients();
             }
             catch (IOException e) {

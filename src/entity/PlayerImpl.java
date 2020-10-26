@@ -16,8 +16,6 @@ public class PlayerImpl implements Player {
     private PrintWriter writer;
     private BufferedReader reader;
 
-    private OnMessageSentListener onMessageSentListener;
-
     private int play;
 
     public PlayerImpl(Socket clientSocket) throws IOException {
@@ -35,10 +33,6 @@ public class PlayerImpl implements Player {
         }
     }
 
-    public void setOnMessageSentListener(OnMessageSentListener onMessageSentListener) {
-        this.onMessageSentListener = onMessageSentListener;
-    }
-
     @Override
     public void sendMessage(String message) {
         Console.println(message);
@@ -50,7 +44,16 @@ public class PlayerImpl implements Player {
 
     @Override
     public int getPlay() {
-        this.play = Integer.parseInt(sendQuestion(StaticResources.OPTS_PLAYS));
+        boolean persist = false;
+
+        do {
+            try {
+                this.play = Integer.parseInt(sendQuestion(StaticResources.OPTS_PLAYS));
+            } catch (NumberFormatException e) {
+                persist = true;
+            }
+        } while (persist);
+
         return this.play;
     }
 
