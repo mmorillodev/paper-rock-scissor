@@ -12,6 +12,7 @@ public class GameParty {
 
     private PlayerImpl player1;
     private Player player2;
+
     private JokenpoOpts player1Play;
     private JokenpoOpts player2Play;
 
