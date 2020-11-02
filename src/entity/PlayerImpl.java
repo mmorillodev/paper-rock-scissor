@@ -20,7 +20,7 @@ public class PlayerImpl extends Player {
     }
 
     @Override
-    public int getPlay() {
+    public int getPlay() throws IOException {
         boolean persist = false;
 
         do {
@@ -53,7 +53,7 @@ public class PlayerImpl extends Player {
         out.sendMessage("Draw!");
     }
 
-    public String sendQuestion(String question) {
+    public String sendQuestion(String question) throws IOException {
         out.sendMessage(question);
         return in.readLine();
     }

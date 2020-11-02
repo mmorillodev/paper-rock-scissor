@@ -42,7 +42,25 @@ public class ServerConnection implements OnClientConnectedListener {
     public void onClientConnected(PlayerImpl playerImpl) {
         Console.println("Client connected");
 
-        new Thread(() -> new ClientSetting(playerImpl, manager).startInitialConfigs()).start();
+        new ClientThread(playerImpl).start();
+    }
+
+    private class ClientThread extends Thread {
+
+        private PlayerImpl player;
+
+        public ClientThread(PlayerImpl player) {
+            this.player = player;
+        }
+
+        @Override
+        public void run() {
+            try {
+                new ClientSetting(player, manager).startInitialConfigs();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private class AwaitClientThread extends Thread {

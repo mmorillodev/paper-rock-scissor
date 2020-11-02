@@ -1,12 +1,14 @@
 package entity;
 
+import java.io.IOException;
+
 public abstract class Player {
 
     private int wins;
     private int loses;
     private int draws;
 
-    public abstract int getPlay();
+    public abstract int getPlay() throws IOException;
 
     public void notifyLoss() {
         loses++;

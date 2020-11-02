@@ -6,6 +6,7 @@ import exceptions.NoSuchPartyException;
 import exceptions.PartyAlreadyExistsException;
 import utils.Console;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ClientSetting {
@@ -19,13 +20,13 @@ public class ClientSetting {
         this.manager = manager;
     }
 
-    public void startInitialConfigs() {
+    public void startInitialConfigs() throws IOException {
         do {
            handlePartyDecision();
         } while (!finishedSetup);
     }
 
-    private void handlePartyDecision() {
+    private void handlePartyDecision() throws IOException {
         String answer = playerImpl.sendQuestion("[1] Connect to an existing party\n[2] Create a new party\n> ");
         switch (answer) {
             case "1":
@@ -39,7 +40,7 @@ public class ClientSetting {
         }
     }
 
-    private void handleConnectParty() {
+    private void handleConnectParty() throws IOException {
         String partyName = playerImpl.sendQuestion("Type the name of the party you want to connect to, or type '!list' to get the list of all the available parties: ");
 
         if(partyName.equals("!list")) {
@@ -51,11 +52,13 @@ public class ClientSetting {
         }
     }
 
-    private void handleCreateParty() {
+    private void handleCreateParty() throws IOException {
         String partyName = playerImpl.sendQuestion("What is the name of the party? ");
         String competitorResponse = playerImpl.sendQuestion("Do you wish to start the match with a bot? [Y] | [N]");
 
         boolean error = false;
+
+        Console.println(competitorResponse);
 
         try {
             if(competitorResponse.equalsIgnoreCase("y"))
@@ -89,7 +92,7 @@ public class ClientSetting {
 
         List<String> allPartiesList = manager.getAllPartyNames();
         if(allPartiesList != null)
-            allPartiesList.stream().reduce((acm, current) -> acm + "\n" + current).orElse(null);
+            allParties = allPartiesList.stream().reduce((acm, current) -> acm + "\n" + current).orElse(null);
 
         playerImpl.out.sendMessage(allParties);
     }

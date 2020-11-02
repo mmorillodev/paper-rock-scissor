@@ -2,6 +2,9 @@ package entity;
 
 import exceptions.FullPartyException;
 import resources.JokenpoOpts;
+import utils.Console;
+
+import java.io.IOException;
 
 public class GameParty {
 
@@ -22,6 +25,7 @@ public class GameParty {
 
         if(player1 == null) {
             player1 = playerImpl;
+            Console.println("connected");
         }
         else {
             player2 = playerImpl;
@@ -53,25 +57,33 @@ public class GameParty {
                     handleP2Win();
                     break;
             }
-        } while(true);
+        } while(player1 != null && player2 != null);
     }
 
     private void listenForPlay() {
+
         sendMessageTo(player2, "Waiting for Player 1's play");
-        while(player1Play == null) {
-            player1Play = JokenpoOpts.fromInt(player1.getPlay());
+        while(player1Play == null && player1 != null) {
+            try {
+                player1Play = JokenpoOpts.fromInt(player1.getPlay());
+            } catch (IOException e) {
+                sendMessageTo(player2, "Player 1 has quited!");
+            }
         }
 
         sendMessageTo(player2, "Waiting for Player 2's play");
-
-        while(player2Play == null) {
-            player2Play = JokenpoOpts.fromInt(player2.getPlay());
+        while(player2Play == null && player2 != null) {
+            try {
+                player2Play = JokenpoOpts.fromInt(player2.getPlay());
+            } catch (IOException e) {
+                sendMessageTo(player1, "Player 2 has quited!");
+            }
         }
     }
 
     private void notifyPlayers() {
-        sendMessageTo(player1, "Player 2 played " + player2Play.getString());
-        sendMessageTo(player2, "Player 1 played " + player1Play.getString());
+        sendMessageTo(player1, "Player 2 used " + player2Play.getString());
+        sendMessageTo(player2, "Player 1 used " + player1Play.getString());
     }
 
     private int comparePlays(JokenpoOpts player1Play, JokenpoOpts player2Play) {

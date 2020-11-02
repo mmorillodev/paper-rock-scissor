@@ -15,13 +15,7 @@ public class ClientInput {
         this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
-    public String readLine() {
-        try {
-            return this.reader.readLine();
-        } catch(IOException e) {
-            Console.err(e.getMessage());
-
-            return null;
-        }
+    public String readLine() throws IOException {
+        return this.reader.readLine();
     }
 }
