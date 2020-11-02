@@ -22,7 +22,7 @@ public abstract class Player {
         draws++;
     }
 
-    public int getLoses() {
+    public int getLosses() {
         return loses;
     }
 

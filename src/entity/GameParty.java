@@ -44,7 +44,8 @@ public class GameParty {
             player2Play = null;
 
             listenForPlay();
-            notifyPlayers();
+
+            notifyPlayersOppositePlays();
 
             switch (comparePlays(player1Play, player2Play)) {
                 case 0:
@@ -57,7 +58,28 @@ public class GameParty {
                     handleP2Win();
                     break;
             }
+            showScoreboard();
         } while(player1 != null && player2 != null);
+    }
+
+    private void showScoreboard() {
+        String scoreboardTemplate = "Player 1" +
+                                    "\n  Wins - %d" +
+                                    "\n  Losses - %d" +
+                                "\n\nPlayer 2" +
+                                    "\n  Wins - %d" +
+                                    "\n  Losses - %d" +
+                                "\n\nDraws - %d";
+
+        Object[] tagsReplacement = {
+                player1.getWins(),
+                player1.getLosses(),
+                player2.getWins(),
+                player2.getLosses(),
+                player1.getDraws()
+        };
+
+        notifyAllPlayers(String.format(scoreboardTemplate, tagsReplacement));
     }
 
     private void listenForPlay() {
@@ -81,9 +103,14 @@ public class GameParty {
         }
     }
 
-    private void notifyPlayers() {
+    private void notifyPlayersOppositePlays() {
         sendMessageTo(player1, "Player 2 used " + player2Play.getString());
         sendMessageTo(player2, "Player 1 used " + player1Play.getString());
+    }
+
+    private void notifyAllPlayers(String message) {
+        sendMessageTo(player1, message);
+        sendMessageTo(player2, message);
     }
 
     private int comparePlays(JokenpoOpts player1Play, JokenpoOpts player2Play) {
