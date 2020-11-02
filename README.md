@@ -26,5 +26,6 @@ Developed in _Java_ with sockets
 2. Raphael Nascimento
 3. Vitor Matheus Araujo
 4. Leonardo Arruda
+5. Willian Toshio Takeuchi
 
 Nationality: Brazil
