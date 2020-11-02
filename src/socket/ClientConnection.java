@@ -22,24 +22,33 @@ public class ClientConnection implements Runnable {
         scanner = new ScannerUtils();
 
         try {
-            socket = new Socket(scanner.getStringWithMessage(MSG_IP_REQUEST), DEFAULT_PORT);
-            scanner.clearBuffer();
-
-            this.writer = new PrintWriter(socket.getOutputStream());
+           connectToServer();
         }
         catch (IOException e) {
-            if (e.getMessage().contains(MSG_CONNECTION_REFUSED)) {
-                System.err.println(PREFIX_SERVER_NOT_FOUND_ERROR + e.getMessage());
-            }
+            handleConnectionException(e);
+        }
+    }
+
+    private void connectToServer() throws IOException {
+        Console.br();
+        socket = new Socket(scanner.getStringWithMessage(MSG_IP_REQUEST), DEFAULT_PORT);
+        this.writer = new PrintWriter(socket.getOutputStream());
+    }
+
+    public void handleConnectionException(IOException e) {
+        if (e.getMessage().contains(MSG_CONNECTION_REFUSED)) {
+            Console.err(PREFIX_SERVER_NOT_FOUND_ERROR + e.getMessage());
         }
     }
 
     public void init() {
+        Console.br();
+
         Thread messageReaderThread = new Thread(this);
         messageReaderThread.start();
 
         while(true) {
-            sendMessage(scanner.getStringWithMessage("> "));
+            sendMessage(scanner.getString());
         }
     }
 

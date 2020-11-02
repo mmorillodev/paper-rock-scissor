@@ -1,45 +1,20 @@
 package entity;
 
-import interfaces.OnMessageSentListener;
-import interfaces.Player;
-import utils.Console;
 import utils.StaticResources;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 
-public class PlayerImpl implements Player {
+public class PlayerImpl extends Player {
 
-    private PrintWriter writer;
-    private BufferedReader reader;
+    public ClientOutput out;
+    public ClientInput in;
 
     private int play;
 
     public PlayerImpl(Socket clientSocket) throws IOException {
-        this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        this.writer = new PrintWriter(clientSocket.getOutputStream());
-    }
-
-    public String readLine() {
-        try {
-            return this.reader.readLine();
-        } catch(IOException e) {
-            Console.err(e.getMessage());
-
-            return null;
-        }
-    }
-
-    @Override
-    public void sendMessage(String message) {
-        Console.println(message);
-        Console.println(writer);
-
-        writer.println(message);
-        writer.flush();
+        this.in = new ClientInput(clientSocket);
+        this.out = new ClientOutput(clientSocket);
     }
 
     @Override
@@ -49,7 +24,8 @@ public class PlayerImpl implements Player {
         do {
             try {
                 this.play = Integer.parseInt(sendQuestion(StaticResources.OPTS_PLAYS));
-            } catch (NumberFormatException e) {
+            }
+            catch (NumberFormatException e) {
                 persist = true;
             }
         } while (persist);
@@ -57,8 +33,26 @@ public class PlayerImpl implements Player {
         return this.play;
     }
 
+    @Override
+    public void notifyLoss() {
+        super.notifyLoss();
+        out.sendMessage("You lost");
+    }
+
+    @Override
+    public void notifyWin() {
+        super.notifyWin();
+        out.sendMessage("You lost");
+    }
+
+    @Override
+    public void notifyDraw() {
+        super.notifyDraw();
+        out.sendMessage("Draw!");
+    }
+
     public String sendQuestion(String question) {
-        sendMessage(question);
-        return readLine();
+        out.sendMessage(question);
+        return in.readLine();
     }
 }

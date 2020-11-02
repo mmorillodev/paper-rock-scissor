@@ -1,15 +1,18 @@
-package utils;
+package socket.server;
 
 import entity.PlayerImpl;
 import exceptions.FullPartyException;
 import exceptions.NoSuchPartyException;
-import socket.server.GamePartyManager;
+import exceptions.PartyAlreadyExistsException;
+import utils.Console;
+
+import java.util.List;
 
 public class ClientSetting {
 
-    PlayerImpl playerImpl;
-    GamePartyManager manager;
-    boolean finishedSetup;
+    private PlayerImpl playerImpl;
+    private GamePartyManager manager;
+    private boolean finishedSetup;
 
     public ClientSetting(PlayerImpl playerImpl, GamePartyManager manager) {
         this.playerImpl = playerImpl;
@@ -41,6 +44,7 @@ public class ClientSetting {
 
         if(partyName.equals("!list")) {
             listAllParties();
+
             finishedSetup = false;
         } else {
             searchAndConnectToParty(partyName);
@@ -49,28 +53,45 @@ public class ClientSetting {
 
     private void handleCreateParty() {
         String partyName = playerImpl.sendQuestion("What is the name of the party? ");
+        String competitorResponse = playerImpl.sendQuestion("Do you wish to start the match with a bot? [Y] | [N]");
+
+        boolean error = false;
+
         try {
-            manager.createPartyAndConnect(partyName, playerImpl);
-        } catch (FullPartyException e) {
-            e.printStackTrace();
+            if(competitorResponse.equalsIgnoreCase("y"))
+                manager.createConnectAndStart(partyName, playerImpl);
+            else
+                manager.createPartyAndConnect(partyName, playerImpl);
+        } catch (FullPartyException | PartyAlreadyExistsException e) {
+            playerImpl.out.sendMessage("Error creating party: " + e.getMessage());
+
+            error = true;
         }
 
-        finishedSetup = true;
+        finishedSetup = !error;
     }
 
     private void searchAndConnectToParty(String partyName) {
         if(manager.includesParty(partyName)) {
             connectToParty(playerImpl, partyName);
-            Console.println("successfully connected to party " + partyName);
+            playerImpl.out.sendMessage("successfully connected to party!");
+
             finishedSetup = true;
         } else {
-            playerImpl.sendMessage("Party not found!");
+            playerImpl.out.sendMessage("Party not found!");
+
             finishedSetup = false;
         }
     }
 
     private void listAllParties() {
-        Console.println(manager.getAllPartyNames().stream().reduce((acm, current) -> acm + "\n" + current).orElse(null));
+        String allParties = "There is no parties available!";
+
+        List<String> allPartiesList = manager.getAllPartyNames();
+        if(allPartiesList != null)
+            allPartiesList.stream().reduce((acm, current) -> acm + "\n" + current).orElse(null);
+
+        playerImpl.out.sendMessage(allParties);
     }
 
     private void connectToParty(PlayerImpl playerImpl, String partyName) {

@@ -4,6 +4,7 @@ import entity.PlayerImpl;
 import entity.GameParty;
 import exceptions.FullPartyException;
 import exceptions.NoSuchPartyException;
+import exceptions.PartyAlreadyExistsException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +26,28 @@ public class GamePartyManager {
 
         party.connectClient(playerImpl);
 
-        if(party.readyToStart())
+        if(party.isFull())
             party.startMatch();
     }
 
-    public void createPartyAndConnect(String name, PlayerImpl playerImpl) throws FullPartyException {
+    public void createConnectAndStart(String name, PlayerImpl player)
+            throws PartyAlreadyExistsException, FullPartyException {
+
+        GameParty party = createAndGetParty(name);
+        party.connectClient(player);
+        party.startMatch();
+    }
+
+    public void createPartyAndConnect(String name, PlayerImpl playerImpl)
+            throws FullPartyException, PartyAlreadyExistsException {
+
         createAndGetParty(name).connectClient(playerImpl);
     }
 
-    public GameParty createAndGetParty(String name) {
+    public GameParty createAndGetParty(String name) throws PartyAlreadyExistsException {
+        if(includesParty(name))
+            throw new PartyAlreadyExistsException("Party '" + name + "' aready exists");
+
         GameParty party = new GameParty(name);
         parties.add(party);
 
@@ -54,7 +68,7 @@ public class GamePartyManager {
 
     public List<String> getAllPartyNames() {
         return parties.stream()
-                .map(GameParty::getPartyName)
+                .map(GameParty::getPartyInfos)
                 .collect(Collectors.toList());
     }
 }

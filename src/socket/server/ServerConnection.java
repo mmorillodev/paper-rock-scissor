@@ -2,7 +2,6 @@ package socket.server;
 
 import entity.PlayerImpl;
 import interfaces.OnClientConnectedListener;
-import utils.ClientSetting;
 import utils.Console;
 
 import static utils.StaticResources.*;
@@ -43,7 +42,7 @@ public class ServerConnection implements OnClientConnectedListener {
     public void onClientConnected(PlayerImpl playerImpl) {
         Console.println("Client connected");
 
-        new ClientSetting(playerImpl, manager).startInitialConfigs();
+        new Thread(() -> new ClientSetting(playerImpl, manager).startInitialConfigs()).start();
     }
 
     private class AwaitClientThread extends Thread {
