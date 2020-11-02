@@ -1,6 +1,8 @@
 package entity;
 
-import utils.StaticResources;
+import io.ClientInput;
+import io.ClientOutput;
+import resources.Strings;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -23,7 +25,7 @@ public class PlayerImpl extends Player {
 
         do {
             try {
-                this.play = Integer.parseInt(sendQuestion(StaticResources.OPTS_PLAYS));
+                this.play = Integer.parseInt(sendQuestion(Strings.OPTS_PLAYS));
             }
             catch (NumberFormatException e) {
                 persist = true;

@@ -1,10 +1,10 @@
 package socket.server;
 
 import entity.PlayerImpl;
-import interfaces.OnClientConnectedListener;
+import interfaces.listeners.OnClientConnectedListener;
 import utils.Console;
 
-import static utils.StaticResources.*;
+import static resources.Strings.*;
 
 import java.io.IOException;
 import java.net.InetAddress;

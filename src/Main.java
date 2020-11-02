@@ -1,12 +1,12 @@
 import utils.ConnectionUtils;
 import exceptions.NoSuchOptionException;
 import utils.ScannerUtils;
-import utils.StaticResources;
-import utils.Validators;
+import resources.Strings;
+import resources.Validators;
 
 public class Main {
     public static void main(String[] args) {
-        int opt = new ScannerUtils().getIntWithMessage(StaticResources.MENU_OPTIONS, Validators::optionValidator);
+        int opt = new ScannerUtils().getIntWithMessage(Strings.MENU_OPTIONS, Validators::optionValidator);
 
         connectOrCreateSession(opt);
     }

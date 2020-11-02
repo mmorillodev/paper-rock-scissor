@@ -3,7 +3,7 @@ package socket;
 import utils.Console;
 import utils.ScannerUtils;
 
-import static utils.StaticResources.*;
+import static resources.Strings.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;

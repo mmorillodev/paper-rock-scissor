@@ -2,6 +2,7 @@ package utils;
 
 import exceptions.NoSuchOptionException;
 import interfaces.ConnectionHandler;
+import resources.Strings;
 import socket.ClientConnection;
 import socket.server.ServerConnection;
 
@@ -22,7 +23,7 @@ public class ConnectionUtils {
     public void connectOrCreateSession(int option)
             throws IllegalAccessException, InstantiationException, NoSuchOptionException {
 
-        if(option != StaticResources.OPT_CREATE_MATCH && option != StaticResources.OPT_JOIN_MATCH)
+        if(option != Strings.OPT_CREATE_MATCH && option != Strings.OPT_JOIN_MATCH)
             throw new NoSuchOptionException("Option '" + option + "' couldn't be resolved.");
 
         ((ConnectionHandler) this.handlers.get(option).newInstance()).connect();

@@ -1,4 +1,4 @@
-package entity;
+package resources;
 
 public enum JokenpoOpts {
     ROCK(1), PAPER(2), SCISSOR(3);

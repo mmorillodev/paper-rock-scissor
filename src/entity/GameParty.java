@@ -1,6 +1,7 @@
 package entity;
 
 import exceptions.FullPartyException;
+import resources.JokenpoOpts;
 
 public class GameParty {
 

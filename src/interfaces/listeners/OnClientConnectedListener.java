@@ -1,4 +1,4 @@
-package interfaces;
+package interfaces.listeners;
 
 import entity.PlayerImpl;
 
