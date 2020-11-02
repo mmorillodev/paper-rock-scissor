@@ -96,7 +96,7 @@ public class GameParty {
             }
         }
 
-        sendMessageTo(player2, "Waiting for Player 2's play");
+        sendMessageTo(player1, "Waiting for Player 2's play");
         while(player2Play == null && player2 != null) {
             try {
                 player2Play = JokenpoOpts.fromInt(player2.getPlay());

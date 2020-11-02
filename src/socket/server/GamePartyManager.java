@@ -16,13 +16,13 @@ public class GamePartyManager {
     public void connectClientToParty(PlayerImpl playerImpl, String partyName)
             throws NoSuchPartyException, FullPartyException {
 
-        GameParty party = parties.stream()
-                .filter(currentParty -> currentParty.nameEquals(partyName))
-                .findAny()
-                .orElse(null);
+        GameParty party = getParty(partyName);
 
         if(party == null)
-            throw new NoSuchPartyException("Party " + partyName + " not found");
+            throw new NoSuchPartyException("Party '" + partyName + "' not found");
+
+        if(party.isFull())
+            throw new FullPartyException("Party '" + partyName + "' is full!");
 
         party.connectClient(playerImpl);
 
@@ -46,7 +46,7 @@ public class GamePartyManager {
 
     public GameParty createAndGetParty(String name) throws PartyAlreadyExistsException {
         if(includesParty(name))
-            throw new PartyAlreadyExistsException("Party '" + name + "' aready exists");
+            throw new PartyAlreadyExistsException("Party '" + name + "' already exists");
 
         GameParty party = new GameParty(name);
         parties.add(party);

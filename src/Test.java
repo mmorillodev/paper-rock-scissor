@@ -15,6 +15,8 @@ public class Test {
             System.out.println(manager.getAllPartyNames());
 
             System.out.println(manager.getAllPartyNames().stream().reduce((acm, current) -> acm + "\n" + current).orElse(null));
+
+            System.out.println(manager.includesParty("teste 4"));
         } catch (PartyAlreadyExistsException e) {
             e.printStackTrace();
         }
