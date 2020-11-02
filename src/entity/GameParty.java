@@ -64,13 +64,15 @@ public class GameParty {
     }
 
     private void showScoreboard() {
-        String scoreboardTemplate = "Player 1" +
+        String scoreboardTemplate = "=================================\n" +
+                                    "Player 1" +
                                     "\n  Wins - %d" +
                                     "\n  Losses - %d" +
                                 "\n\nPlayer 2" +
                                     "\n  Wins - %d" +
                                     "\n  Losses - %d" +
-                                "\n\nDraws - %d";
+                                "\n\nDraws - %d\n" +
+                                    "=================================";
 
         Object[] tagsReplacement = {
                 player1.getWins(),

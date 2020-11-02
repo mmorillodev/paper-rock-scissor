@@ -4,7 +4,7 @@ import entity.PlayerImpl;
 import interfaces.listeners.OnClientConnectedListener;
 import utils.Console;
 
-import static resources.Strings.*;
+import static resources.Environment.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -24,7 +24,7 @@ public class ServerConnection implements OnClientConnectedListener {
         catch(IOException e) {
             Console.err(e.getMessage());
             e.printStackTrace();
-            Console.err(ERROR_BUSY_PORT);
+            Console.err("Port already in use!");
         }
     }
 
@@ -74,7 +74,7 @@ public class ServerConnection implements OnClientConnectedListener {
                 getClients();
             }
             catch (IOException e) {
-                out.println(PREFIX_EXCEPTION_THROWN + e.getMessage());
+                out.println("Unexpected error thrown: " + e.getMessage());
                 keepWaiting = false;
             }
         }

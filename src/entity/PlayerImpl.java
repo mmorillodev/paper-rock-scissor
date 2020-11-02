@@ -2,7 +2,6 @@ package entity;
 
 import io.ClientInput;
 import io.ClientOutput;
-import resources.Strings;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -25,7 +24,7 @@ public class PlayerImpl extends Player {
 
         do {
             try {
-                this.play = Integer.parseInt(sendQuestion(Strings.OPTS_PLAYS));
+                this.play = Integer.parseInt(sendQuestion("[1] Rock\n[2] Paper\n[3] Scizor\n> "));
             }
             catch (NumberFormatException e) {
                 persist = true;
@@ -38,13 +37,13 @@ public class PlayerImpl extends Player {
     @Override
     public void notifyLoss() {
         super.notifyLoss();
-        out.sendMessage("You lost");
+        out.sendMessage("You lost!");
     }
 
     @Override
     public void notifyWin() {
         super.notifyWin();
-        out.sendMessage("You lost");
+        out.sendMessage("You win!");
     }
 
     @Override

@@ -1,10 +1,11 @@
 package socket.server;
 
 import entity.PlayerImpl;
+import resources.Environment;
+import utils.Console;
 import exceptions.FullPartyException;
 import exceptions.NoSuchPartyException;
 import exceptions.PartyAlreadyExistsException;
-import utils.Console;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,9 +42,10 @@ public class ClientSetting {
     }
 
     private void handleConnectParty() throws IOException {
-        String partyName = playerImpl.sendQuestion("Type the name of the party you want to connect to, or type '!list' to get the list of all the available parties: ");
+        String partyName = playerImpl.sendQuestion("Type the name of the party you want to connect to, " +
+                "or type '!list' to get the list of all the available parties: ");
 
-        if(partyName.equals("!list")) {
+        if(partyName.equals(Environment.PREFIX_LIST_PARTIES)) {
             listAllParties();
 
             finishedSetup = false;
@@ -58,10 +60,8 @@ public class ClientSetting {
 
         boolean error = false;
 
-        Console.println(competitorResponse);
-
         try {
-            if(competitorResponse.equalsIgnoreCase("y"))
+            if(competitorResponse.equalsIgnoreCase(Environment.OPT_YES))
                 manager.createConnectAndStart(partyName, playerImpl);
             else
                 manager.createPartyAndConnect(partyName, playerImpl);
