@@ -5,21 +5,19 @@ import entity.GameParty;
 import exceptions.FullPartyException;
 import exceptions.NoSuchPartyException;
 import exceptions.PartyAlreadyExistsException;
+import interfaces.listeners.OnPlayerDisconnectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GamePartyManager {
+public class GamePartyManager implements OnPlayerDisconnectedListener {
     private List<GameParty> parties = new ArrayList<>();
 
     public void connectClientToParty(PlayerImpl playerImpl, String partyName)
             throws NoSuchPartyException, FullPartyException {
 
-        GameParty party = parties.stream()
-                .filter(currentParty -> currentParty.nameEquals(partyName))
-                .findAny()
-                .orElse(null);
+        GameParty party = getParty(partyName);
 
         if(party == null)
             throw new NoSuchPartyException("Party " + partyName + " not found");
@@ -49,6 +47,7 @@ public class GamePartyManager {
             throw new PartyAlreadyExistsException("Party '" + name + "' aready exists");
 
         GameParty party = new GameParty(name);
+        party.setOnPlayerDisconnectedListener(this);
         parties.add(party);
 
         return party;
@@ -70,5 +69,15 @@ public class GamePartyManager {
         return parties.stream()
                 .map(GameParty::getPartyInfos)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void onPlayerDisconnect(GameParty party) {
+        if(party.isEmpty()) {
+            this.parties.remove(party);
+        }
+        else {
+            //TODO -  ask client if it wants to continue the match with an bot, wait another player or quit
+        }
     }
 }

@@ -1,8 +1,8 @@
 package entity;
 
 import exceptions.FullPartyException;
+import interfaces.listeners.OnPlayerDisconnectedListener;
 import resources.JokenpoOpts;
-import utils.Console;
 
 import java.io.IOException;
 
@@ -12,9 +12,9 @@ public class GameParty {
 
     private PlayerImpl player1;
     private Player player2;
-
     private JokenpoOpts player1Play;
     private JokenpoOpts player2Play;
+    private OnPlayerDisconnectedListener onPlayerDisconnectedListener;
 
     public GameParty(String partyName) {
         this.partyName = partyName;
@@ -26,7 +26,7 @@ public class GameParty {
 
         if(player1 == null) {
             player1 = playerImpl;
-            Console.println("connected");
+            sendMessageTo(player1, "Waiting another player");
         }
         else {
             player2 = playerImpl;
@@ -46,7 +46,7 @@ public class GameParty {
 
             listenForPlay();
 
-            notifyPlayersOppositePlays();
+            notifyPlayersOpponentPlay();
 
             switch (comparePlays(player1Play, player2Play)) {
                 case 0:
@@ -101,12 +101,19 @@ public class GameParty {
             try {
                 player2Play = JokenpoOpts.fromInt(player2.getPlay());
             } catch (IOException e) {
-                sendMessageTo(player1, "Player 2 has quited!");
+                player2 = null;
+                notifyClientDisconnected();
             }
         }
     }
 
-    private void notifyPlayersOppositePlays() {
+    private void notifyClientDisconnected() {
+        if(this.onPlayerDisconnectedListener != null) {
+            this.onPlayerDisconnectedListener.onPlayerDisconnect(this);
+        }
+    }
+
+    private void notifyPlayersOpponentPlay() {
         sendMessageTo(player1, "Player 2 used " + player2Play.getString());
         sendMessageTo(player2, "Player 1 used " + player1Play.getString());
     }
@@ -147,9 +154,15 @@ public class GameParty {
     }
 
     private void sendMessageTo(Player p, String message) {
+        if(p == null) return;
+
         if(p instanceof PlayerImpl) {
             ((PlayerImpl) p).out.sendMessage(message);
         }
+    }
+
+    public void setOnPlayerDisconnectedListener(OnPlayerDisconnectedListener onPlayerDisconnectedListener) {
+        this.onPlayerDisconnectedListener = onPlayerDisconnectedListener;
     }
 
     public boolean nameEquals(String name) {
@@ -170,5 +183,9 @@ public class GameParty {
 
     public boolean isFull() {
         return player1 != null & player2 != null;
+    }
+
+    public boolean isEmpty() {
+        return player1 == null && player2 == null;
     }
 }
