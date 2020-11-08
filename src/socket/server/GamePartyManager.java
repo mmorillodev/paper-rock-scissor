@@ -7,12 +7,14 @@ import exceptions.NoSuchPartyException;
 import exceptions.PartyAlreadyExistsException;
 import interfaces.listeners.OnPlayerDisconnectedListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GamePartyManager implements OnPlayerDisconnectedListener {
-    private List<GameParty> parties = new ArrayList<>();
+
+    private final List<GameParty> parties = new ArrayList<>();
 
     public void connectClientToParty(PlayerImpl playerImpl, String partyName)
             throws NoSuchPartyException, FullPartyException {
@@ -77,7 +79,30 @@ public class GamePartyManager implements OnPlayerDisconnectedListener {
             this.parties.remove(party);
         }
         else {
-            //TODO -  ask client if it wants to continue the match with an bot, wait another player or quit
+            askPlayerNextSteps(party);
         }
+    }
+
+    private void askPlayerNextSteps(GameParty party) {
+        PlayerImpl player = (PlayerImpl) party.getAllPlayers().get(0);
+
+        String opt = "";
+        do {
+            try {
+                opt = player.sendQuestion("Choose an option:\n[1] Continue game with an bot\n[2] Wait another player\n[3] Leave match\n>");
+                switch (opt) {
+                    case "1":
+                        party.startMatch();
+                        break;
+                    case "2":
+                        break;
+                    case "3":
+                        party.destroy();
+                        break;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } while (!(opt.equals("1") || opt.equals("2") || opt.equals("3")));
     }
 }

@@ -12,8 +12,8 @@ import java.util.List;
 
 public class ClientSetting {
 
-    private PlayerImpl playerImpl;
-    private GamePartyManager manager;
+    private final PlayerImpl playerImpl;
+    private final GamePartyManager manager;
     private boolean finishedSetup;
 
     public ClientSetting(PlayerImpl playerImpl, GamePartyManager manager) {

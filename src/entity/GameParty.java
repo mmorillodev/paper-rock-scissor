@@ -3,8 +3,11 @@ package entity;
 import exceptions.FullPartyException;
 import interfaces.listeners.OnPlayerDisconnectedListener;
 import resources.JokenpoOpts;
+import utils.Console;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameParty {
 
@@ -46,21 +49,25 @@ public class GameParty {
 
             listenForPlay();
 
-            notifyPlayersOpponentPlay();
+            if(player1 != null && player2 != null) {
+                notifyPlayersOpponentPlay();
 
-            switch (comparePlays(player1Play, player2Play)) {
-                case 0:
-                    handleDraw();
-                    break;
-                case 1:
-                    handleP1Win();
-                    break;
-                case -1:
-                    handleP2Win();
-                    break;
+                switch (comparePlays(player1Play, player2Play)) {
+                    case 0:
+                        handleDraw();
+                        break;
+                    case 1:
+                        handleP1Win();
+                        break;
+                    case -1:
+                        handleP2Win();
+                        break;
+                }
+                showScoreboard();
             }
-            showScoreboard();
+
         } while(player1 != null && player2 != null);
+        notifyClientDisconnected();
     }
 
     private void showScoreboard() {
@@ -92,19 +99,33 @@ public class GameParty {
             try {
                 player1Play = JokenpoOpts.fromInt(player1.getPlay());
             } catch (IOException e) {
-                sendMessageTo(player2, "Player 1 has quited!");
+                handleP1Quited();
             }
         }
+
+        if(player2 == null) return;
 
         sendMessageTo(player2, "Waiting for Player 2's play");
         while(player2Play == null && player2 != null) {
             try {
                 player2Play = JokenpoOpts.fromInt(player2.getPlay());
             } catch (IOException e) {
-                player2 = null;
-                notifyClientDisconnected();
+                Console.println(e.getMessage());
+                handleP2Quited();
+
             }
         }
+    }
+
+    private void handleP1Quited() {
+        sendMessageTo(player2, "Player 1 has quited! You're now player 1!");
+        player1 = (player2 instanceof PlayerImpl ? (PlayerImpl) player2 : null);
+        player2 = null;
+    }
+
+    private void handleP2Quited() {
+        sendMessageTo(player1, "Player 2 has quited!");
+        player2 = null;
     }
 
     private void notifyClientDisconnected() {
@@ -169,23 +190,49 @@ public class GameParty {
         return this.partyName.equals(name);
     }
 
-    public String getPartyInfos() {
+    public int getPlayersQtt() {
         int playersQtt = 0;
 
-        if(player1 != null)
+        if(player1 != null) {
             playersQtt++;
 
-        if (player2 != null)
-            playersQtt++;
+            if (player2 != null) {
+                playersQtt++;
+            }
+        }
 
-        return this.partyName + " - [" + playersQtt + "/2]";
+        return playersQtt;
+    }
+
+    public List<Player> getAllPlayers() {
+        List<Player> players = new ArrayList<>(getPlayersQtt());
+
+        if(player1 != null) {
+            players.add(player1);
+
+            if(player2 != null) {
+                players.add(player2);
+            }
+        }
+
+        return players;
+    }
+
+    public String getPartyInfos() {
+        return this.partyName + " - [" + getPlayersQtt() + "/2]";
     }
 
     public boolean isFull() {
-        return player1 != null & player2 != null;
+        return getPlayersQtt() == 2;
     }
 
     public boolean isEmpty() {
-        return player1 == null && player2 == null;
+        return getPlayersQtt() == 0;
+    }
+
+    public void destroy() {
+        player1 = null;
+        player2 = null;
+        notifyClientDisconnected();
     }
 }
