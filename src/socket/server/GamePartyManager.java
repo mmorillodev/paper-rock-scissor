@@ -22,7 +22,10 @@ public class GamePartyManager implements OnPlayerDisconnectedListener {
         GameParty party = getParty(partyName);
 
         if(party == null)
-            throw new NoSuchPartyException("Party " + partyName + " not found");
+            throw new NoSuchPartyException("Party '" + partyName + "' not found");
+
+        if(party.isFull())
+            throw new FullPartyException("Party '" + partyName + "' is full!");
 
         party.connectClient(playerImpl);
 
@@ -46,7 +49,7 @@ public class GamePartyManager implements OnPlayerDisconnectedListener {
 
     public GameParty createAndGetParty(String name) throws PartyAlreadyExistsException {
         if(includesParty(name))
-            throw new PartyAlreadyExistsException("Party '" + name + "' aready exists");
+            throw new PartyAlreadyExistsException("Party '" + name + "' already exists");
 
         GameParty party = new GameParty(name);
         party.setOnPlayerDisconnectedListener(this);

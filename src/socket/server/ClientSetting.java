@@ -2,7 +2,6 @@ package socket.server;
 
 import entity.PlayerImpl;
 import resources.Environment;
-import utils.Console;
 import exceptions.FullPartyException;
 import exceptions.NoSuchPartyException;
 import exceptions.PartyAlreadyExistsException;
@@ -75,13 +74,13 @@ public class ClientSetting {
     }
 
     private void searchAndConnectToParty(String partyName) {
-        if(manager.includesParty(partyName)) {
-            connectToParty(playerImpl, partyName);
+        try {
+            manager.connectClientToParty(playerImpl, partyName);
             playerImpl.out.sendMessage("successfully connected to party!");
 
             finishedSetup = true;
-        } else {
-            playerImpl.out.sendMessage("Party not found!");
+        } catch (NoSuchPartyException | FullPartyException e) {
+            playerImpl.out.sendMessage(e.getMessage());
 
             finishedSetup = false;
         }
@@ -95,13 +94,5 @@ public class ClientSetting {
             allParties = allPartiesList.stream().reduce((acm, current) -> acm + "\n" + current).orElse(null);
 
         playerImpl.out.sendMessage(allParties);
-    }
-
-    private void connectToParty(PlayerImpl playerImpl, String partyName) {
-        try {
-            manager.connectClientToParty(playerImpl, partyName);
-        } catch (NoSuchPartyException | FullPartyException e) {
-            Console.err(e.getMessage());
-        }
     }
 }
